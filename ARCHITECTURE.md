@@ -83,7 +83,9 @@ flowchart TD
 - **设备状态流**：`device:status:{device_id}` (Hash)，实时反映设备的在线、空闲、忙碌状态。
 - **Pub/Sub 总线**：用于内部微服务解耦，如 `topic:slow_engine_success` 触发 Script Forge。
 
-## 5. 部署拓扑
-- **后端服务**：Kubernetes 或 Docker Compose 部署 FastAPI、Signaling Gateway、VLM Proxy，支持水平扩容。
+## 5. 部署拓扑 (Go + Python 混编微服务)
+- **基建层 (Go)**：`Signaling Gateway` 和 `Fleet Management` 由 Golang 编写，利用 Goroutine 的高并发优势死死握住十万级云手机的 WebSocket 长连接，提供极高的稳定性与极低的内存占用。
+- **逻辑层 (Python)**：`Cantor 实例集群` 和 `Script Forge` 由 Python 编写。专心做 prompt 编排、VLM 视觉解析、大模型调用和动态生成/执行快引擎 DSL 脚本。
+- **微服务通信**：Go 节点与 Python 节点之间通过 Redis 队列（如 `cantor:{id}:queue`）与 gRPC 协议进行高性能通信。
 - **中间件**：云原生 PostgreSQL (RDS) 和 Redis Cluster。
 - **客户端**：将 Python/Go 编写的 Worker Client 打包到云手机 IaaS 平台的标准基础镜像（Golden Image）中，随实例启动自动连回 Gateway。
