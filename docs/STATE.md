@@ -11,9 +11,8 @@
 - [x] Setup Hourly Reporting Cron Job.
 - [x] Parse IaaS API documentation (Done).
 - [x] Develop `cantor-gateway` (Go) - WebSocket + Redis Pub/Sub (Done).
-- [x] Develop `cantor-brain` (Python) - FastAPI + Redis Client (Done).
-- [ ] Implement Cantor Core Logic (Device Management, Fleet Management, Task Queues) (In Progress - Backend Dev Agent).
-- [ ] Integration Testing between Gateway and Brain.
+- [x] Develop `cantor-brain` (Python) - FastAPI + Redis Client + Core APIs (Done).
+- [ ] Integration Testing between Gateway and Brain (In Progress - Integration Agent).
 
 ## 3. Sub-agent Roles & Status
 1. **Manager (Main Session)**: Orchestrates tasks, updates `STATE.md`, communicates with user.
