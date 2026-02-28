@@ -20,7 +20,8 @@
 2. **Doc Reader Agent**: ✅ Done. Extracted IaaS API spec to `docs/iaas_api_spec.md`.
 3. **Gateway Dev Agent**: ✅ Done. Implemented WebSocket + Redis Pub/Sub in Go.
 4. **Brain Dev Agent**: ✅ Done. Implemented Redis client and event handling in Python.
-5. **Backend Dev Agent**: 🆕 Next. Implementing Cantor core logic (Device/Fleet management).
+5. **Backend Dev Agent**: ✅ Done. Implemented Device/CantorInstance/TaskQueue APIs.
+6. **Integration Agent**: 🆕 Next. Integration testing and end-to-end validation.
 
 ## 4. Blockers / Dependencies
 - RTC API documentation pending (skipped for now).
