@@ -10,11 +10,10 @@
 - [x] Migrate and refine PRD and ARCHITECTURE docs.
 - [x] Setup Hourly Reporting Cron Job.
 - [x] Parse IaaS API documentation (Done).
-- [x] Develop `cantor-gateway` (Go) - Base Setup (Done).
-- [x] Develop `cantor-brain` (Python) - Base Setup (Done).
-- [x] Implement Redis Pub/Sub in Gateway for device commands (Done).
-- [x] Implement Redis Pub/Sub in Brain for sending commands (Done).
-- [ ] Implement Cantor Core Logic (Device Management, Routing, Queues) (Next Phase).
+- [x] Develop `cantor-gateway` (Go) - WebSocket + Redis Pub/Sub (Done).
+- [x] Develop `cantor-brain` (Python) - FastAPI + Redis Client (Done).
+- [ ] Implement Cantor Core Logic (Device Management, Fleet Management, Task Queues) (In Progress - Backend Dev Agent).
+- [ ] Integration Testing between Gateway and Brain.
 
 ## 3. Sub-agent Roles & Status
 1. **Manager (Main Session)**: Orchestrates tasks, updates `STATE.md`, communicates with user.
