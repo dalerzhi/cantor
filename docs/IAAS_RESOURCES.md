@@ -2,7 +2,7 @@
 
 ## 状态: ✅ 已验证连通
 
-## 查询时间: 2026-03-01 20:25
+## 查询时间: 2026-03-01 20:30
 
 ## API 凭证
 
@@ -13,22 +13,69 @@
 | Secret Key | a589615d6d144dd5aa3e776a9ac4f303 |
 | 状态 | ✅ 已验证 |
 
-## 项目列表
+## 资源总览
 
-| 项目名 | 板卡数 | UUID |
-|--------|--------|------|
-| default | 0 | 56af0e3d73733d7eaf73a9774e34b731 |
-| 865 | 9 | fc03fd009526878939d72a73fe06fcd0 |
-| 3588 | 5 | 9b827d2887c060da69028d0aa7c510ee |
-| 8550 | 3 | 3a9caace82b03f0d3f8bd5d4b42cd325 |
+| 资源类型 | 数量 |
+|----------|------|
+| 项目 | 4 个 |
+| 板卡 | 17 张 |
+| 云手机实例 | **21 个** |
 
-**总计: 4 个项目，17 张板卡**
+## 项目详情
 
-## 云手机实例
+| 项目 | 板卡数 | 实例数 |
+|------|--------|--------|
+| default | 0 | 0 |
+| 865 | 9 | 10 |
+| 3588 | 5 | 5 |
+| 8550 | 3 | 6 |
 
-**当前实例数: 0**
+## 云手机实例列表
 
-板卡已分配但尚未创建容器实例。需要在 CAStack 控制台或通过 API 创建。
+### 项目 865 (10 个实例)
+
+| 名称 | UUID | IP | 板卡SN | 状态 | 分辨率 |
+|------|------|-----|--------|------|--------|
+| sspd-P2-1-i1 | qishuo-jinhua-1-csnlpvcy1psn29mp | 10.1.110.12 | OR65M62QC2S243801867 | 运行中 | 720x1280 |
+| sspd-P2-1-i2 | qishuo-jinhua-1-9nuh49z99m8gwdk3 | 10.1.110.13 | OR65M62QC2S243801867 | 运行中 | 720x1280 |
+| sspd-P2-1-i3 | qishuo-jinhua-1-qlh317tlslr4zs3d | 10.1.110.14 | OR65M62QC2S243801867 | 运行中 | 720x1280 |
+| sspd-P2-1-i4 | qishuo-jinhua-1-csmb6al1ohgo6isq | 10.1.110.15 | OR65M62QC2S243801867 | 运行中 | 720x1280 |
+| sspd-P2-1-i5 | qishuo-jinhua-1-111l9jfe8y7rseqd | 10.1.110.16 | OR65M62QC2S243801867 | 运行中 | 720x1280 |
+| sspd-P2-3-i1 | qishuo-jinhua-1-n00v4mik0ssmepfz | 10.1.110.2 | OR65M62QC2S243802484 | 已关机 | 720x1280 |
+| sspd-P2-3-i2 | qishuo-jinhua-1-9szcjk0ykvkml2e9 | 10.1.110.3 | OR65M62QC2S243802484 | 已关机 | 720x1280 |
+| sspd-P2-3-i3 | qishuo-jinhua-1-xca90vjlk9v9pa2d | 10.1.110.4 | OR65M62QC2S243802484 | 已关机 | 720x1280 |
+| sspd-P2-3-i4 | qishuo-jinhua-1-2rznafwc042k09c4 | 10.1.110.5 | OR65M62QC2S243802484 | 已关机 | 720x1280 |
+| sspd-P2-3-i5 | qishuo-jinhua-1-xnndsuu745usx3gj | 10.1.110.6 | OR65M62QC2S243802484 | 已关机 | 720x1280 |
+
+### 项目 3588 (5 个实例)
+
+| 名称 | UUID | IP | 板卡SN | 状态 | 分辨率 |
+|------|------|-----|--------|------|--------|
+| sspd-P1-2-i1 | qishuo-jinhua-1-a256vqzf91z93y5i | 10.1.112.2 | CR10M22RK2M243002877 | 运行中 | 720x1280 |
+| sspd-P1-2-i2 | qishuo-jinhua-1-11a0ylu8oxei7ggi | 10.1.112.3 | CR10M22RK2M243002877 | 运行中 | 720x1280 |
+| sspd-P1-2-i3 | qishuo-jinhua-1-s3cgruy2jp99m1jk | 10.1.112.4 | CR10M22RK2M243002877 | 运行中 | 720x1280 |
+| sspd-P1-2-i4 | qishuo-jinhua-1-lec79gujmqm3y6kj | 10.1.112.5 | CR10M22RK2M243002877 | 运行中 | 720x1280 |
+| sspd-P1-2-i5 | qishuo-jinhua-1-8m7j086gos3wy6j6 | 10.1.112.6 | CR10M22RK2M243002877 | 运行中 | 720x1280 |
+
+### 项目 8550 (6 个实例)
+
+| 名称 | UUID | IP | 板卡SN | 状态 | 分辨率 |
+|------|------|-----|--------|------|--------|
+| sspd-test-1-i1 | qishuo-jinhua-1-nlba3x4wp8xrcl6f | 10.1.120.4 | ORG2Q32QC2P242401942 | 已关机 | 1080x1920 |
+| sspd-test-1-i2 | qishuo-jinhua-1-hxl42tyxe8an3hgw | 10.1.120.5 | ORG2Q32QC2P242401942 | 已关机 | 1080x1920 |
+| sspd-test-2-i1 | qishuo-jinhua-1-mm26z0u1ulpffkhh | 10.1.120.2 | ORG2Q32QC2P242403031 | 已关机 | 1080x1920 |
+| sspd-test-2-i2 | qishuo-jinhua-1-aehgjl2l136l4592 | 10.1.120.3 | ORG2Q32QC2P242403031 | 已关机 | 1080x1920 |
+| sspd-test-3-i1 | qishuo-jinhua-1-qp5jl6mhk5ogpxoo | 10.1.120.6 | ORG2Q32QC2P242402291 | 已关机 | 1080x1920 |
+| sspd-test-3-i2 | qishuo-jinhua-1-a1c8pr4d1kt216g9 | 10.1.120.7 | ORG2Q32QC2P242402291 | 已关机 | 1080x1920 |
+
+## 状态说明
+
+| 状态码 | 含义 |
+|--------|------|
+| 1 | 运行中 |
+| 2 | 已关机 |
+| 3 | 异常 |
+| 4 | 运行中 (新状态) |
 
 ## 认证方式
 
@@ -40,29 +87,23 @@ import time
 ts = int(time.time())
 sign = hmac.new(SK.encode('utf-8'), str(ts).encode('utf-8'), hashlib.sha256).hexdigest()
 
-url = f"{BASE_URL}/v1/project/list?time={ts}&sign={sign}"
+url = f"{BASE_URL}/v2/instance/page/list?time={ts}&sign={sign}"
 headers = {
     "X-ak": AK,
     "Content-Type": "application/json",
     "cache-control": "no-cache"
 }
+
+# 查询时需要指定 projectId
+body = {
+    "pageNum": 1,
+    "pageSize": 100,
+    "projectId": "项目UUID"
+}
 ```
-
-## 可用 API
-
-| 端点 | 方法 | 说明 |
-|------|------|------|
-| `/v1/project/list` | POST | 项目列表 ✅ |
-| `/v2/instance/page/list` | POST | 容器分页列表 ✅ |
-| `/v2/instance/create` | POST | 创建容器 |
-| `/v2/instance/start` | POST | 启动容器 |
-| `/v2/instance/stop` | POST | 停止容器 |
-| `/v2/instance/ssh-info` | POST | SSH 连接信息 |
-| `/v2/command/instance` | POST | 异步命令 |
-| `/v2/command/instance/sync` | POST | 同步命令 |
 
 ## 下一步
 
-1. 在 CAStack 控制台创建云手机容器
+1. 启动已关机的实例
 2. 部署 cantor-worker 到容器
 3. 连接 Cantor Gateway 测试
