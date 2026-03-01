@@ -3,8 +3,13 @@
 多租户架构：Organization → Workspace → User/Role/APIKey
 """
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional, List
+
+
+def utcnow():
+    """返回 UTC 时间（Python 3.12+ 兼容）"""
+    return datetime.now(timezone.utc)
 from sqlalchemy import (
     Column, String, Boolean, DateTime, ForeignKey, Text, Integer,
     ARRAY, JSON, UniqueConstraint, Index
@@ -35,8 +40,8 @@ class Organization(Base):
     settings = Column(JSONB, default=dict)
 
     # 审计字段
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
-    updated_at = Column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=utcnow)
+    updated_at = Column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
     deleted_at = Column(DateTime(timezone=True), nullable=True)
 
     # 关系
@@ -67,8 +72,8 @@ class Workspace(Base):
     settings = Column(JSONB, default=dict)
 
     status = Column(String(20), default="active", index=True)
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
-    updated_at = Column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=utcnow)
+    updated_at = Column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
     deleted_at = Column(DateTime(timezone=True), nullable=True)
 
     # 关系
@@ -116,14 +121,14 @@ class User(Base):
     last_login_ip = Column(String(45), nullable=True)
     failed_login_attempts = Column(Integer, default=0)
     locked_until = Column(DateTime(timezone=True), nullable=True)
-    password_changed_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+    password_changed_at = Column(DateTime(timezone=True), default=utcnow)
 
     # Token 版本（用于全局吊销）
     token_version = Column(Integer, default=1)
 
     # 审计字段
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
-    updated_at = Column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=utcnow)
+    updated_at = Column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
     created_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
 
     # 关系
@@ -158,8 +163,8 @@ class Role(Base):
     is_system = Column(Boolean, default=False)
     is_default = Column(Boolean, default=False)
 
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
-    updated_at = Column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=utcnow)
+    updated_at = Column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
 
     # 关系
     organization = relationship("Organization", back_populates="roles")
@@ -181,10 +186,10 @@ class UserWorkspaceRole(Base):
 
     # 授权信息
     granted_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
-    granted_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+    granted_at = Column(DateTime(timezone=True), default=utcnow)
     expires_at = Column(DateTime(timezone=True), nullable=True)
 
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=utcnow)
 
     # 关系
     user = relationship("User", back_populates="user_workspace_roles", foreign_keys=[user_id])
@@ -234,8 +239,8 @@ class APIKey(Base):
 
     # 审计
     created_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
-    updated_at = Column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=utcnow)
+    updated_at = Column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
 
     # 关系
     organization = relationship("Organization", back_populates="api_keys")

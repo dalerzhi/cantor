@@ -3,7 +3,7 @@
 处理密码哈希、JWT 生成和验证
 """
 import secrets
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 from typing import Optional, Tuple, Dict, Any, List
 import jwt
 from passlib.context import CryptContext
@@ -103,7 +103,7 @@ def generate_token_pair(user: User, workspaces: List[Dict[str, Any]]) -> Tuple[s
     Returns:
         (access_token, refresh_token)
     """
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
 
     # 收集所有权限
     all_permissions = set()
@@ -299,7 +299,7 @@ async def refresh_access_token(
     # 将旧的 refresh token 加入黑名单
     if redis_client:
         exp = claims.get("exp", 0)
-        ttl = max(exp - datetime.utcnow().timestamp(), 60)
+        ttl = max(exp - datetime.now(timezone.utc).timestamp(), 60)
         await redis_client.setex(f"jwt:blacklist:{jti}", int(ttl), "revoked")
 
     return new_access, new_refresh
@@ -391,7 +391,7 @@ class AuthService:
             password_hash=hash_password(password),
             name=name,
             status="active",
-            email_verified_at=datetime.utcnow()  # 注册时默认验证
+            email_verified_at=datetime.now(timezone.utc)  # 注册时默认验证
         )
         self.db.add(user)
         await self.db.flush()
@@ -462,7 +462,7 @@ class AuthService:
             return None, "账户已被禁用"
 
         # 检查锁定
-        if user.locked_until and user.locked_until > datetime.utcnow():
+        if user.locked_until and user.locked_until > datetime.now(timezone.utc):
             return None, f"账户已锁定，请 {user.locked_until} 后重试"
 
         # 验证密码
@@ -472,7 +472,7 @@ class AuthService:
 
             # 检查是否需要锁定
             if user.failed_login_attempts >= settings.MAX_FAILED_LOGIN_ATTEMPTS:
-                user.locked_until = datetime.utcnow() + timedelta(
+                user.locked_until = datetime.now(timezone.utc) + timedelta(
                     minutes=settings.LOCKOUT_DURATION_MINUTES
                 )
                 await self.db.commit()
@@ -484,7 +484,7 @@ class AuthService:
         # 登录成功，重置失败次数
         user.failed_login_attempts = 0
         user.locked_until = None
-        user.last_login_at = datetime.utcnow()
+        user.last_login_at = datetime.now(timezone.utc)
         await self.db.commit()
 
         # 加载组织
@@ -539,7 +539,7 @@ class AuthService:
             exp: token 过期时间戳
         """
         if self.redis:
-            ttl = max(exp - datetime.utcnow().timestamp(), 60)
+            ttl = max(exp - datetime.now(timezone.utc).timestamp(), 60)
             await self.redis.setex(f"jwt:blacklist:{jti}", int(ttl), "logout")
 
         return True

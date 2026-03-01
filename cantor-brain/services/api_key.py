@@ -4,7 +4,7 @@ API Key 服务
 """
 import hashlib
 import secrets
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional, Tuple, List, Dict, Any
 from sqlalchemy import select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -139,7 +139,7 @@ class APIKeyService:
                 if api_key_info.get("status") != "active":
                     return None
                 if api_key_info.get("expires_at"):
-                    if datetime.fromisoformat(api_key_info["expires_at"]) < datetime.utcnow():
+                    if datetime.fromisoformat(api_key_info["expires_at"]) < datetime.now(timezone.utc):
                         return None
                 return api_key_info
 
@@ -157,7 +157,7 @@ class APIKeyService:
             return None
 
         # 检查过期
-        if api_key.expires_at and api_key.expires_at < datetime.utcnow():
+        if api_key.expires_at and api_key.expires_at < datetime.now(timezone.utc):
             return None
 
         # 检查 IP 白名单
@@ -166,7 +166,7 @@ class APIKeyService:
                 return None
 
         # 更新最后使用时间
-        api_key.last_used_at = datetime.utcnow()
+        api_key.last_used_at = datetime.now(timezone.utc)
         api_key.last_used_ip = client_ip
         await self.db.commit()
 
@@ -216,7 +216,7 @@ class APIKeyService:
 
         # 撤销
         api_key.status = "revoked"
-        api_key.revoked_at = datetime.utcnow()
+        api_key.revoked_at = datetime.now(timezone.utc)
         api_key.revoked_reason = reason
 
         await self.db.commit()

@@ -2,7 +2,7 @@
 组织 API
 组织的 CRUD 操作
 """
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional, List
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, Field
@@ -238,7 +238,7 @@ async def update_organization(
         current_quotas.update(request.quotas)
         org.quotas = current_quotas
 
-    org.updated_at = datetime.utcnow()
+    org.updated_at = datetime.now(timezone.utc)
     await db.commit()
     await db.refresh(org)
 

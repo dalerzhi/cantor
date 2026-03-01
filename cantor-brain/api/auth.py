@@ -2,7 +2,7 @@
 用户认证 API
 注册、登录、登出、Token 刷新
 """
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from pydantic import BaseModel, EmailStr, Field
@@ -72,6 +72,12 @@ class LoginResponse(BaseModel):
 class MessageResponse(BaseModel):
     """通用消息响应"""
     message: str
+
+
+class ChangePasswordRequest(BaseModel):
+    """修改密码请求"""
+    current_password: str = Field(..., min_length=1)
+    new_password: str = Field(..., min_length=12)
 
 
 # ===== API 路由 =====
@@ -279,10 +285,9 @@ async def get_me(
     )
 
 
-@router.put("/me/password", response_model=MessageResponse)
+@router.post("/me/password", response_model=MessageResponse)
 async def change_password(
-    current_password: str,
-    new_password: str,
+    request: ChangePasswordRequest,
     auth: AuthContext = Depends(require_auth()),
     db: AsyncSession = Depends(get_db)
 ):
@@ -294,7 +299,7 @@ async def change_password(
     from sqlalchemy import select
 
     # 验证密码强度
-    valid, msg = validate_password_strength(new_password)
+    valid, msg = validate_password_strength(request.new_password)
     if not valid:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -312,15 +317,15 @@ async def change_password(
         )
 
     # 验证当前密码
-    if not verify_password(current_password, user.password_hash):
+    if not verify_password(request.current_password, user.password_hash):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="当前密码错误"
         )
 
     # 更新密码
-    user.password_hash = hash_password(new_password)
-    user.password_changed_at = datetime.utcnow()
+    user.password_hash = hash_password(request.new_password)
+    user.password_changed_at = datetime.now(timezone.utc)
     user.token_version += 1  # 使所有 token 失效
 
     await db.commit()
