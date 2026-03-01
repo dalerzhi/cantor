@@ -1,6 +1,6 @@
 # Cantor 项目交付计划
 
-## 当前进度 (2026-03-01 18:20)
+## 当前进度 (2026-03-01 18:30)
 
 ### ✅ 已完成
 - [x] cantor-gateway (Go) - WebSocket + Redis Pub/Sub
@@ -10,29 +10,55 @@
 - [x] 测试套件 (2710 行)
 - [x] 代码审查 (A-)
 - [x] cantor-frontend (Next.js) - Dashboard UI
-- [x] cantor-worker (Go) - Android 客户端
-- [x] **IaaS API 集成** ✨
+- [x] cantor-worker (Go) - Android 客户端 (8.1M)
+- [x] IaaS API 集成 - CAStack 云平台 ✅
+- [x] **前后端集成测试** ✅
 
 ---
 
-## IaaS 集成详情
+## 集成测试结果
 
-### 平台信息
-- **平台**: CAStack 云平台
-- **API**: https://castack-gncenter.cheersucloud.com/openapi/
-- **认证**: `X-ak` Header + URL `time&sign` 参数
-- **状态**: ✅ 已验证连接成功
+### API 测试
+- ✅ 注册 API: `POST /api/auth/register`
+- ✅ 登录 API: `POST /api/auth/login`
+- ✅ Token 格式正确
+- ✅ 用户信息返回完整
 
-### 可用 API
+### 前端更新
+- ✅ 登录页添加 org_slug 字段
+- ✅ 注册页添加密码策略提示
+- ✅ 前端容器重新部署
 
-| API | 功能 |
-|-----|------|
-| `/v2/instance/page/list` | 容器列表 |
-| `/v2/instance/start` | 启动容器 |
-| `/v2/instance/stop` | 停止容器 |
-| `/v2/command/instance/sync` | 同步执行命令 |
-| `/v2/command/instance` | 异步执行命令 |
-| `/v2/instance/ssh-info` | SSH 连接信息 |
+---
+
+## 服务状态
+
+| 服务 | 端口 | 状态 |
+|------|------|------|
+| PostgreSQL | 5432 | ✅ healthy |
+| Redis | 6379 | ✅ healthy |
+| Brain | 8000 | ✅ healthy |
+| Gateway | 8766 | ✅ healthy |
+| Frontend | 3000 | ✅ running |
+
+### 访问地址
+
+| 服务 | URL |
+|------|-----|
+| 前端 Dashboard | http://localhost:3000 |
+| API 文档 | http://localhost:8000/docs |
+| WebSocket | ws://localhost:8766/ws |
+| IaaS API | https://castack-gncenter.cheersucloud.com/openapi/ |
+
+---
+
+## 测试账号
+
+```
+邮箱: test2@example.com
+密码: TestPass123!@#
+组织: test-org-2
+```
 
 ---
 
@@ -46,29 +72,16 @@ cantor/
 │       └── iaas_client.py  # IaaS API 客户端 ✅
 ├── cantor-frontend/     # Next.js Dashboard ✅
 ├── cantor-worker/       # Go Android 客户端 ✅
-├── docker-compose.yml
+├── docker-compose.yml   # Docker 编排 ✅
 └── docs/
-    ├── IAAS_CONFIG.md   # IaaS 配置文档 ✅
-    └── iaas_api_spec.md # API 规范
+    ├── IAAS_CONFIG.md   # IaaS 配置 ✅
+    └── iaas_api_spec.md # API 规范 ✅
 ```
-
----
-
-## 服务状态
-
-| 服务 | 端口 | 状态 |
-|------|------|------|
-| PostgreSQL | 5432 | ✅ |
-| Redis | 6379 | ✅ |
-| Brain | 8000 | ✅ |
-| Gateway | 8766 | ✅ |
-| Frontend | 3000 | ✅ |
-| **IaaS API** | - | ✅ 已连通 |
 
 ---
 
 ## 下一步
 
-1. **前后端集成**: 连接 Frontend 与 Brain API
-2. **Worker 部署**: 部署 Worker 到云手机测试
-3. **端到端测试**: 完整流程验证
+1. **端到端测试**: 完整业务流程验证
+2. **Worker 部署**: 部署到云手机测试
+3. **生产配置**: HTTPS、域名、监控
