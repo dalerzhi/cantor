@@ -137,7 +137,9 @@ def require_auth():
         async def protected_route(auth: AuthContext = Depends(require_auth())):
             return {"user_id": auth.user_id}
     """
-    return Depends(get_current_user)
+    # 返回 get_current_user 函数本身，而不是 Depends 对象
+    # 这样 Depends(require_auth()) 就等于 Depends(get_current_user)
+    return get_current_user
 
 
 def require_permission(permission: str):
@@ -161,7 +163,8 @@ def require_permission(permission: str):
             )
         return auth
 
-    return Depends(permission_checker)
+    # 返回函数本身，而不是 Depends 对象
+    return permission_checker
 
 
 def require_workspace_access(workspace_id_param: str = "workspace_id"):
@@ -190,7 +193,8 @@ def require_workspace_access(workspace_id_param: str = "workspace_id"):
 
         return auth
 
-    return Depends(workspace_checker)
+    # 返回函数本身，而不是 Depends 对象
+    return workspace_checker
 
 
 class APIKeyAuth:
