@@ -2,29 +2,56 @@
 
 ## CAStack 云平台
 
-- **平台地址**: http://43.139.47.124:1800/
+- **平台地址**: https://castack-gncenter.cheersucloud.com/
+- **API 前缀**: https://castack-gncenter.cheersucloud.com/openapi/
 - **Access Key**: 91e28b4734d642b29c1ad64cbb44df8a
 - **Secret Key**: a589615d6d144dd5aa3e776a9ac4f303
 
-## API 探索结果
+## 鉴权方式
 
-### 已确认信息
-- 平台名称: CAStack 云平台
-- 技术栈: Spring Boot (Java)
-- API 前缀: `/api/v1/*`
-- 认证端点: `/auth/oauth/token`
+### 请求头
+```
+X-ak: {AK}
+Content-Type: application/json
+cache-control: no-cache
+```
 
-### 端点列表 (需认证)
-- `GET /api/v1/phones` - 云手机列表
-- `GET /api/v1/regions` - 区域列表
-- `GET /api/v1/specs` - 规格列表
-- `GET /api/v1/quota` - 配额查询
+### URL 参数
+```
+?time={秒级时间戳}&sign=HMAC-SHA256(SK, time)
+```
 
-### 认证方式
-❓ 待确认 - 可能是自定义签名算法
+### 签名算法
+```python
+import hmac
+import hashlib
 
-### 下一步
-需要 IaaS 平台提供方提供：
-1. API 文档 (Swagger/OpenAPI)
-2. 认证方式说明 (签名算法)
-3. 示例代码
+def sign(sk: str, timestamp: int) -> str:
+    return hmac.new(
+        sk.encode('utf-8'),
+        str(timestamp).encode('utf-8'),
+        hashlib.sha256
+    ).hexdigest()
+```
+
+### 示例
+```
+POST /openapi/v2/instance/page/list?time=1640494526&sign=xxx
+X-ak: 91e28b4734d642b29c1ad64cbb44df8a
+```
+
+## 常用 API
+
+| API | 方法 | 功能 |
+|-----|------|------|
+| `/v2/instance/page/list` | POST | 容器列表 |
+| `/v2/instance/details/{uuid}` | GET | 容器详情 |
+| `/v2/instance/start` | POST | 启动容器 |
+| `/v2/instance/stop` | POST | 停止容器 |
+| `/v2/instance/ssh-info` | POST | SSH 连接信息 |
+| `/v2/command/instance` | POST | 异步执行命令 |
+| `/v2/command/instance/sync` | POST | 同步执行命令 |
+
+## 状态
+
+✅ **已验证连接成功** (2026-03-01)
