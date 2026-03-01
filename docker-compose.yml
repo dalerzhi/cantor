@@ -51,34 +51,21 @@ services:
     container_name: cantor-brain
     restart: unless-stopped
     environment:
-      # 应用配置
       DEBUG: ${DEBUG:-false}
       PROJECT_NAME: ${PROJECT_NAME:-Cantor Brain}
       VERSION: ${VERSION:-1.0.0}
-      
-      # 数据库 - 连接 postgres 容器
       DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-cantor}:${POSTGRES_PASSWORD:-cantor_secret}@postgres:5432/${POSTGRES_DB:-cantor}
-      
-      # Redis - 连接 redis 容器
       REDIS_URL: redis://:${REDIS_PASSWORD:-redis_secret}@redis:6379/0
-      
-      # JWT 配置
       JWT_SECRET_KEY: ${JWT_SECRET_KEY:-change-this-in-production}
       JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
       JWT_ACCESS_TOKEN_EXPIRE_MINUTES: ${JWT_ACCESS_TOKEN_EXPIRE_MINUTES:-15}
       JWT_REFRESH_TOKEN_EXPIRE_DAYS: ${JWT_REFRESH_TOKEN_EXPIRE_DAYS:-7}
-      
-      # 密码策略
       PASSWORD_MIN_LENGTH: ${PASSWORD_MIN_LENGTH:-12}
       PASSWORD_HASH_COST: ${PASSWORD_HASH_COST:-12}
       MAX_FAILED_LOGIN_ATTEMPTS: ${MAX_FAILED_LOGIN_ATTEMPTS:-5}
       LOCKOUT_DURATION_MINUTES: ${LOCKOUT_DURATION_MINUTES:-30}
-      
-      # API Key
       API_KEY_PREFIX: ${API_KEY_PREFIX:-cantor_}
       API_KEY_LENGTH: ${API_KEY_LENGTH:-48}
-      
-      # CORS
       CORS_ORIGINS: ${CORS_ORIGINS:-*}
     ports:
       - "${BRAIN_PORT:-8000}:8000"
@@ -119,6 +106,22 @@ services:
       timeout: 10s
       retries: 3
       start_period: 20s
+    networks:
+      - cantor-network
+
+  # Frontend 服务 (Next.js)
+  frontend:
+    build:
+      context: ./cantor-frontend
+      dockerfile: Dockerfile
+    container_name: cantor-frontend
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - brain
     networks:
       - cantor-network
 

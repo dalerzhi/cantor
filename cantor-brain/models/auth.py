@@ -133,7 +133,7 @@ class User(Base):
 
     # 关系
     organization = relationship("Organization", back_populates="users")
-    user_workspace_roles = relationship("UserWorkspaceRole", back_populates="user", cascade="all, delete-orphan")
+    user_workspace_roles = relationship("UserWorkspaceRole", back_populates="user", foreign_keys="[UserWorkspaceRole.user_id]", cascade="all, delete-orphan")
     created_api_keys = relationship("APIKey", back_populates="creator")
 
     __table_args__ = (

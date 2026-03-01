@@ -6,19 +6,27 @@ import secrets
 from datetime import datetime, timezone, timedelta
 from typing import Optional, Tuple, Dict, Any, List
 import jwt
-from passlib.context import CryptContext
+import bcrypt
 from sqlalchemy import select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.config import settings
 from models.auth import User, Organization, Workspace, Role, UserWorkspaceRole
 
-# 密码哈希上下文
-pwd_context = CryptContext(
-    schemes=["bcrypt"],
-    deprecated="auto",
-    bcrypt__rounds=settings.PASSWORD_HASH_COST
-)
+
+def hash_password(password: str) -> str:
+    """哈希密码"""
+    salt = bcrypt.gensalt(rounds=settings.PASSWORD_HASH_COST)
+    hashed = bcrypt.hashpw(password.encode('utf-8'), salt)
+    return hashed.decode('utf-8')
+
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    """验证密码"""
+    try:
+        return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
+    except Exception:
+        return False
 
 
 class Permission:
@@ -61,16 +69,6 @@ def check_permission(user_perms: List[str], required: str) -> bool:
         if Permission(perm).match(required):
             return True
     return False
-
-
-def hash_password(password: str) -> str:
-    """哈希密码"""
-    return pwd_context.hash(password)
-
-
-def verify_password(password: str, hash: str) -> bool:
-    """验证密码"""
-    return pwd_context.verify(password, hash)
 
 
 def validate_password_strength(password: str) -> Tuple[bool, str]:
