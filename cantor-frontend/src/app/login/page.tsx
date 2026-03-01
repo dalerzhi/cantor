@@ -11,6 +11,7 @@ export default function LoginPage() {
   const { setAuth } = useAuthStore();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [orgSlug, setOrgSlug] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -20,7 +21,11 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const response: any = await authApi.login({ email, password });
+      const response: any = await authApi.login({ 
+        email, 
+        password,
+        org_slug: orgSlug || undefined 
+      });
       setAuth(
         {
           id: response.user.id,
@@ -80,6 +85,19 @@ export default function LoginPage() {
               className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
               placeholder="••••••••••••"
               required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              组织标识 <span className="text-gray-400">(可选)</span>
+            </label>
+            <input
+              type="text"
+              value={orgSlug}
+              onChange={(e) => setOrgSlug(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+              placeholder="my-company"
             />
           </div>
 

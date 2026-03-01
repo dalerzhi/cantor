@@ -172,6 +172,17 @@ export default function RegisterPage() {
               />
             </div>
           </div>
+          
+          <div className="text-xs text-gray-500 bg-gray-50 p-3 rounded-lg">
+            <p className="font-medium mb-1">密码要求：</p>
+            <ul className="list-disc list-inside space-y-0.5">
+              <li>至少 12 个字符</li>
+              <li>包含大写字母 (A-Z)</li>
+              <li>包含小写字母 (a-z)</li>
+              <li>包含数字 (0-9)</li>
+              <li>包含特殊字符 (!@#$%^&*)</li>
+            </ul>
+          </div>
 
           <button
             type="submit"
