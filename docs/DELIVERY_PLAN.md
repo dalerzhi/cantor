@@ -1,6 +1,6 @@
 # Cantor 项目交付计划
 
-## 当前进度 (2026-03-01 18:15)
+## 当前进度 (2026-03-01 18:20)
 
 ### ✅ 已完成
 - [x] cantor-gateway (Go) - WebSocket + Redis Pub/Sub
@@ -10,35 +10,46 @@
 - [x] 测试套件 (2710 行)
 - [x] 代码审查 (A-)
 - [x] cantor-frontend (Next.js) - Dashboard UI
-- [x] **cantor-worker (Go)** - Android 客户端 ✨
-
-### ⏸️ 阻塞
-- [ ] IaaS API 集成 - 认证方式未知
+- [x] cantor-worker (Go) - Android 客户端
+- [x] **IaaS API 集成** ✨
 
 ---
 
-## cantor-worker 详情
+## IaaS 集成详情
 
-### 功能
-- WebSocket 连接 Gateway
-- 任务执行 (Shell/ADB/脚本)
-- 屏幕操作 (点击/滑动/输入/截屏)
-- 状态心跳上报
+### 平台信息
+- **平台**: CAStack 云平台
+- **API**: https://castack-gncenter.cheersucloud.com/openapi/
+- **认证**: `X-ak` Header + URL `time&sign` 参数
+- **状态**: ✅ 已验证连接成功
 
-### 构建
-```bash
-make build-android
-# 输出: bin/cantor-worker-android-arm64 (8.1M)
+### 可用 API
+
+| API | 功能 |
+|-----|------|
+| `/v2/instance/page/list` | 容器列表 |
+| `/v2/instance/start` | 启动容器 |
+| `/v2/instance/stop` | 停止容器 |
+| `/v2/command/instance/sync` | 同步执行命令 |
+| `/v2/command/instance` | 异步执行命令 |
+| `/v2/instance/ssh-info` | SSH 连接信息 |
+
+---
+
+## 项目结构
+
 ```
-
-### 部署
-```bash
-# 方式1: ADB 推送
-adb push bin/cantor-worker-android-arm64 /data/local/tmp/
-adb shell chmod +x /data/local/tmp/cantor-worker
-
-# 方式2: IaaS API 下载
-POST /v2/command/instance { command: "download", ... }
+cantor/
+├── cantor-gateway/      # Go WebSocket 网关 ✅
+├── cantor-brain/        # Python FastAPI ✅
+│   └── services/
+│       └── iaas_client.py  # IaaS API 客户端 ✅
+├── cantor-frontend/     # Next.js Dashboard ✅
+├── cantor-worker/       # Go Android 客户端 ✅
+├── docker-compose.yml
+└── docs/
+    ├── IAAS_CONFIG.md   # IaaS 配置文档 ✅
+    └── iaas_api_spec.md # API 规范
 ```
 
 ---
@@ -52,25 +63,12 @@ POST /v2/command/instance { command: "download", ... }
 | Brain | 8000 | ✅ |
 | Gateway | 8766 | ✅ |
 | Frontend | 3000 | ✅ |
-
----
-
-## 项目结构
-
-```
-cantor/
-├── cantor-gateway/      # Go WebSocket 网关
-├── cantor-brain/        # Python FastAPI 服务
-├── cantor-frontend/     # Next.js Dashboard
-├── cantor-worker/       # Go Android 客户端 ✨
-├── docker-compose.yml
-└── docs/
-```
+| **IaaS API** | - | ✅ 已连通 |
 
 ---
 
 ## 下一步
 
-1. **IaaS 集成**: 等待认证文档
-2. **Worker 集成测试**: 部署到云手机测试
+1. **前后端集成**: 连接 Frontend 与 Brain API
+2. **Worker 部署**: 部署 Worker 到云手机测试
 3. **端到端测试**: 完整流程验证
