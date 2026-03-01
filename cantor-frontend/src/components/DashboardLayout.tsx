@@ -18,6 +18,7 @@ import {
 
 const navItems = [
   { href: '/', label: '概览', icon: LayoutDashboard },
+  { href: '/cloud-phones', label: '云手机管理', icon: Smartphone },
   { href: '/cantors', label: 'Cantor 实例', icon: Bot },
   { href: '/devices', label: '设备舰队', icon: Smartphone },
   { href: '/tasks', label: '任务监控', icon: ListTodo },

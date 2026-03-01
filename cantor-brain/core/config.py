@@ -36,6 +36,11 @@ class Settings(BaseSettings):
     # CORS
     CORS_ORIGINS: str = "*"
 
+    # IaaS Configuration
+    IAAS_BASE_URL: str = "https://castack-gncenter.cheersucloud.com/openapi"
+    IAAS_ACCESS_KEY: str = ""
+    IAAS_SECRET_KEY: str = ""
+
     class Config:
         env_file = ".env"
         case_sensitive = True
