@@ -2,8 +2,10 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"log"
 	"net/http"
+	"os"
 	"sync"
 	"time"
 
@@ -43,6 +45,30 @@ func (cm *ConnectionManager) Remove(conn *websocket.Conn) {
 		delete(cm.connections, conn)
 		_ = conn.Close()
 		log.Printf("Client disconnected: %s. Total clients: %d", deviceID, len(cm.connections))
+	}
+}
+
+// healthHandler 健康检查端点
+func healthHandler(rdb *redis.Client) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		ctx, cancel := context.WithTimeout(r.Context(), 2*time.Second)
+		defer cancel()
+
+		// 检查 Redis 连接
+		redisStatus := "ok"
+		if err := rdb.Ping(ctx).Err(); err != nil {
+			redisStatus = "error: " + err.Error()
+		}
+
+		response := map[string]interface{}{
+			"status":    "ok",
+			"timestamp": time.Now().UTC().Format(time.RFC3339),
+			"redis":     redisStatus,
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(response)
 	}
 }
 
@@ -114,8 +140,20 @@ func handleWebSocket(cm *ConnectionManager, rdb *redis.Client) http.HandlerFunc 
 }
 
 func main() {
-	// Connect to local Redis (redis://localhost:6379/0)
-	opts, err := redis.ParseURL("redis://localhost:6379/0")
+	// 从环境变量读取 Redis URL，默认为本地
+	redisURL := os.Getenv("REDIS_URL")
+	if redisURL == "" {
+		redisURL = "redis://localhost:6379/0"
+	}
+
+	// 从环境变量读取端口，默认为 8766
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8766"
+	}
+
+	// 连接 Redis
+	opts, err := redis.ParseURL(redisURL)
 	if err != nil {
 		log.Fatalf("Failed to parse Redis URL: %v", err)
 	}
@@ -130,11 +168,12 @@ func main() {
 
 	cm := NewConnectionManager()
 
+	// 注册路由
+	http.HandleFunc("/health", healthHandler(rdb))
 	http.HandleFunc("/ws", handleWebSocket(cm, rdb))
 
-	port := ":8766"
-	log.Printf("WebSocket server starting on %s...", port)
-	if err := http.ListenAndServe(port, nil); err != nil {
+	log.Printf("WebSocket server starting on :%s...", port)
+	if err := http.ListenAndServe(":"+port, nil); err != nil {
 		log.Fatalf("Server failed: %v", err)
 	}
 }
