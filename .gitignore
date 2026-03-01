@@ -60,6 +60,7 @@ Thumbs.db
 # Go
 cantor-gateway/cantor-gateway
 cantor-gateway/main
+cantor-worker/bin/
 
 # Docker
 docker/.env
