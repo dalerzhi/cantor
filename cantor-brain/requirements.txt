@@ -22,3 +22,13 @@ typing-inspection==0.4.2
 typing_extensions==4.15.0
 uvicorn==0.39.0
 yarl==1.22.0
+
+# Auth & Database
+sqlalchemy[asyncio]==2.0.23
+asyncpg==0.29.0
+alembic==1.13.1
+passlib[bcrypt]==1.7.4
+PyJWT==2.8.0
+pydantic-settings==2.1.0
+python-dotenv==1.0.0
+email-validator==2.1.0
