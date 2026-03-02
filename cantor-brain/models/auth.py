@@ -31,7 +31,11 @@ class Organization(Base):
     name = Column(String(255), nullable=False)
     slug = Column(String(100), unique=True, nullable=False, index=True)
     tier = Column(String(20), nullable=False, default="b2b")  # b2b/b2c
+    plan_tier = Column(String(20), nullable=False, default="trial")  # trial/standard/enterprise
     status = Column(String(20), nullable=False, default="active", index=True)  # active/suspended/deleted
+    trial_ends_at = Column(DateTime(timezone=True), nullable=True)
+    max_nodes = Column(Integer, default=5)
+    vlm_quota_remaining = Column(Integer, default=1000)
 
     # 资源配额
     quotas = Column(JSONB, default=dict)

@@ -80,6 +80,19 @@ func handleWebSocket(cm *ConnectionManager, rdb *redis.Client) http.HandlerFunc 
 			deviceID = "unknown-device" 
 		}
 
+		tenantID := r.URL.Query().Get("tenant_id")
+		if tenantID != "" {
+			cm.mu.RLock()
+			currentNodes := len(cm.connections)
+			cm.mu.RUnlock()
+
+			if err := CheckTenant(r.Context(), tenantID, currentNodes); err != nil {
+				log.Printf("Tenant validation failed for %s: %v", tenantID, err)
+				http.Error(w, err.Error(), http.StatusForbidden)
+				return
+			}
+		}
+
 		conn, err := upgrader.Upgrade(w, r, nil)
 		if err != nil {
 			log.Printf("Failed to upgrade connection: %v", err)
@@ -140,6 +153,9 @@ func handleWebSocket(cm *ConnectionManager, rdb *redis.Client) http.HandlerFunc 
 }
 
 func main() {
+	// Initialize Database connection
+	InitDB()
+
 	// 从环境变量读取 Redis URL，默认为本地
 	redisURL := os.Getenv("REDIS_URL")
 	if redisURL == "" {
@@ -171,6 +187,10 @@ func main() {
 	// 注册路由
 	http.HandleFunc("/health", healthHandler(rdb))
 	http.HandleFunc("/ws", handleWebSocket(cm, rdb))
+
+	// Admin 路由
+	http.HandleFunc("/admin/tenant/trial", AdminMiddleware(adminSetupTrialHandler))
+	http.HandleFunc("/admin/tenant/update", AdminMiddleware(adminUpdateTenantHandler))
 
 	log.Printf("WebSocket server starting on :%s...", port)
 	if err := http.ListenAndServe(":"+port, nil); err != nil {
