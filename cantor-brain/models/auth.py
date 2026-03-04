@@ -53,6 +53,7 @@ class Organization(Base):
     users = relationship("User", back_populates="organization", cascade="all, delete-orphan")
     roles = relationship("Role", back_populates="organization", cascade="all, delete-orphan")
     api_keys = relationship("APIKey", back_populates="organization", cascade="all, delete-orphan")
+    devices = relationship("Device", back_populates="organization")
 
     __table_args__ = (
         Index('idx_organizations_slug', 'slug'),
