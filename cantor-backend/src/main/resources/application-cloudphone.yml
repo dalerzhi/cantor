@@ -1,0 +1,10 @@
+# 云手机配置
+cloudphone:
+  # 信令服务地址
+  signaling:
+    url: https://hfcxsig.cheersucloud.com:8443
+  
+  # 信令服务AK/SK
+  # 注意：这是信令服务的凭证，不是IaaS平台的
+  ak: DrzGA2UVd6u299
+  sk: DTsjNV2q74Y8MqG7880Tp724L081l5G
