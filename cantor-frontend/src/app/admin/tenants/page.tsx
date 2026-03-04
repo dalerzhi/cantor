@@ -125,12 +125,12 @@ export default function TenantsPage() {
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
             <h2 className="font-semibold text-gray-900">租户列表</h2>
-            <link
+            <Link
               href="/admin/devices"
               className="text-sm text-blue-600 hover:text-blue-700"
             >
               去分配设备 →
-            </link>
+            </Link>
           </div>
 
           {loading ? (
