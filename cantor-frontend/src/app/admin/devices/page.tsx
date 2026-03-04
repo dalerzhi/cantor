@@ -331,7 +331,7 @@ export default function DeviceAllocationPage() {
               {selectedTenant && (
                 <div className="bg-gray-50 rounded-lg p-4">
                   {
-                    tenants.find((t) => t.id === selectedTenant)?.deviceCount +
+                    (tenants.find((t) => t.id === selectedTenant)?.deviceCount || 0) +
                       selectedDevices.size >
                     (tenants.find((t) => t.id === selectedTenant)?.maxDevices || 0) ? (
                       <p className="text-sm text-red-600">
