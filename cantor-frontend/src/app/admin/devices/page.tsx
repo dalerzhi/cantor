@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Smartphone, Users, Check, X, RefreshCw } from 'lucide-react';
 import { api } from '@/lib/api';
-import { useSearchParams } from 'next/navigation';
+// import { useSearchParams } from 'next/navigation';
 
 interface Device {
   id: string;
@@ -30,8 +30,8 @@ interface Tenant {
 }
 
 export default function DeviceAllocationPage() {
-  const searchParams = useSearchParams();
-  const preselectedTenant = searchParams.get('tenant');
+  // const searchParams = useSearchParams();
+  const preselectedTenant = null;
 
   const [devices, setDevices] = useState<Device[]>([]);
   const [tenants, setTenants] = useState<Tenant[]>([]);
