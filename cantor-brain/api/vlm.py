@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from db.session import get_db
+from api.deps import get_db
 from models.auth import Organization
 from pydantic import BaseModel
 
@@ -12,12 +12,14 @@ class VLMRequest(BaseModel):
     tenant_id: str
 
 @router.post("/visual-fix")
-async def execute_visual_fix(request: VLMRequest, db: Session = Depends(get_db)):
+async def execute_visual_fix(request: VLMRequest, db: AsyncSession = Depends(get_db)):
     """
     Call VLM slow engine for visual fix.
     """
     # Fetch tenant
-    org = db.query(Organization).filter(Organization.id == request.tenant_id).first()
+    result = await db.execute(select(Organization).where(Organization.id == request.tenant_id))
+    org = result.scalar_one_or_none()
+    
     if not org:
         raise HTTPException(status_code=404, detail="Tenant not found")
     
@@ -30,7 +32,7 @@ async def execute_visual_fix(request: VLMRequest, db: Session = Depends(get_db))
         
     # Deduct quota
     org.vlm_quota_remaining -= 1
-    db.commit()
+    await db.commit()
     
     # Mock VLM execution
     return {

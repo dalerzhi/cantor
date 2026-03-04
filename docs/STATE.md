@@ -18,7 +18,10 @@
 - [x] **Docker Deployment Configuration**.
 - [x] **Comprehensive Test Suite (2710 lines)**.
 - [x] **Code Review (B+ Rating)**.
-- [ ] IaaS API Integration (Blocked - needs credentials).
+- [x] **Public Cloud Deployment (IP: 23.236.119.225)**.
+- [x] **Official Website Landing Page (Static Next.js)**.
+- [ ] Real Payment Channel Integration (Stripe/Alipay).
+- [ ] Admin Panel Frontend.
 
 ## 3. Sub-agent Roles & Status
 1. **Manager (Main Session)**: ✅ Orchestrated all tasks.

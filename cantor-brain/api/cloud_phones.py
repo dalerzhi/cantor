@@ -10,7 +10,7 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from api.deps import get_db, get_current_user
-from models.user import User
+from models.auth import User
 from services.iaas_client import IaaSClient
 from core.config import settings
 
