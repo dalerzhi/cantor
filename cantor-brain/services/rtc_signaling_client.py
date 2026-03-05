@@ -58,40 +58,29 @@ class RTCSignalingClient:
         # Base64 编码
         return base64.b64encode(signature).decode('utf-8')
     
-    async def get_encrypted_key_v4(
+    async def get_encrypted_key_v2(
         self,
-        instance_id: str,
+        container_id: str,
         region: str = "cn-east-1",
         image_quality: int = 1,
-        mode: int = 1,
-        timeout: int = 3600
+        mode: int = 1
     ) -> Dict[str, Any]:
         """
-        获取加密串 (V4 接口 - 推荐)
+        获取加密串 (V2 接口 - 实际验证可用)
         
         Args:
-            instance_id: 云手机实例 ID
+            container_id: 云手机容器 ID (不是 instanceId)
             region: 区域代码
             image_quality: 画质等级 (1=高清, 2=普通, 3=高速, 4=急速)
             mode: 模式 (1=保持帧率, 2=保持分辨率, 3=平衡)
-            timeout: 连接超时时间(秒)
         
         Returns:
-            {
-                "base64Str": "加密串...",
-                "lineInformation": {
-                    "ipPortMappings": {...},
-                    "perfect": "最优线路ID"
-                }
-            }
+            {"base64Str": "加密串..."}
         """
-        # 准备 data 参数
+        # 准备 data 参数 - 使用 containerId
         data = {
-            "instanceId": instance_id,
-            "ipPorts": [],  # 可选，不传则自动分配
+            "containerId": container_id,
             "region": region,
-            "timeout": timeout,
-            "mappingType": 1,
             "imageQuality": image_quality,
             "mode": mode
         }
@@ -111,8 +100,8 @@ class RTCSignalingClient:
         # 生成签名
         params["signature"] = self._generate_signature(params)
         
-        # 发送请求
-        url = f"{self.base_url}/coordinate/api/v4/room"
+        # 发送请求 - V2 接口
+        url = f"{self.base_url}/coordinate/api/v2/cstreaming/register"
         response = await self.client.post(url, json=params)
         response.raise_for_status()
         
