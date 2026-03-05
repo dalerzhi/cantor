@@ -133,8 +133,7 @@ async def sync_cloud_phones(
     
     try:
         # 1. 获取项目列表
-        projects_data = client.list_projects()
-        projects = projects_data.get('body', {}).get('result', [])
+        projects = client.list_projects()
         
         # 2. 遍历项目获取实例
         all_instances = []
@@ -145,7 +144,7 @@ async def sync_cloud_phones(
             instances_data = client.list_instances(
                 page_num=1,
                 page_size=100,
-                project_uuid=project_id
+                project_id=project_id
             )
             
             result = instances_data.get('body', {}).get('result', {})

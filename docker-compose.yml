@@ -67,6 +67,14 @@ services:
       API_KEY_PREFIX: ${API_KEY_PREFIX:-cantor_}
       API_KEY_LENGTH: ${API_KEY_LENGTH:-48}
       CORS_ORIGINS: ${CORS_ORIGINS:-*}
+      # IaaS Configuration
+      IAAS_BASE_URL: ${IAAS_BASE_URL:-https://castack-gncenter.cheersucloud.com/openapi}
+      IAAS_ACCESS_KEY: ${IAAS_ACCESS_KEY}
+      IAAS_SECRET_KEY: ${IAAS_SECRET_KEY}
+      # Signaling Configuration
+      SIGNALING_BASE_URL: ${SIGNALING_BASE_URL:-https://castack-signaling.cheersucloud.com}
+      SIGNALING_ACCESS_KEY: ${SIGNALING_ACCESS_KEY}
+      SIGNALING_SECRET_KEY: ${SIGNALING_SECRET_KEY}
     ports:
       - "${BRAIN_PORT:-8000}:8000"
     depends_on:
