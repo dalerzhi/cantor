@@ -17,6 +17,7 @@ from api.auth import router as auth_router
 from api.organizations import router as orgs_router
 from api.workspaces import router as workspaces_router
 from api.admin import router as admin_router
+from api.rtc import router as rtc_router
 
 
 @asynccontextmanager
@@ -62,6 +63,7 @@ app.include_router(orgs_router, prefix="/api")
 app.include_router(workspaces_router, prefix="/api")
 app.include_router(api_router, prefix="/api")
 app.include_router(admin_router, prefix="/api")
+app.include_router(rtc_router, prefix="/api")
 
 
 # 健康检查

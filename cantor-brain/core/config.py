@@ -41,6 +41,11 @@ class Settings(BaseSettings):
     IAAS_ACCESS_KEY: str = ""
     IAAS_SECRET_KEY: str = ""
 
+    # RTC Signaling Backend Configuration
+    SIGNALING_BASE_URL: str = "https://castack-signaling.cheersucloud.com"
+    SIGNALING_ACCESS_KEY: str = ""
+    SIGNALING_SECRET_KEY: str = ""
+
     class Config:
         env_file = ".env"
         case_sensitive = True
