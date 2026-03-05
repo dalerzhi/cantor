@@ -67,3 +67,5 @@ docker/.env
 
 # PID files
 .pids/
+.env.credentials
+docker/.env
