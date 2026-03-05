@@ -32,7 +32,7 @@ class EncryptedKeyResponse(BaseModel):
 @router.post("/encrypted-key", response_model=EncryptedKeyResponse)
 async def get_encrypted_key(
     request: EncryptedKeyRequest,
-    auth: AuthContext = Depends(get_current_user()),
+    auth: AuthContext = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
     """

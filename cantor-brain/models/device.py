@@ -37,8 +37,8 @@ class Device(Base):
     ip_address = Column(String(50))
     resolution = Column(String(50))
     
-    # 扩展元数据
-    metadata = Column(JSON, default={})
+    # 扩展元数据 (注意: 不能叫 metadata，这是 SQLAlchemy 保留字)
+    extra_data = Column(JSON, default={})
     
     # 时间戳
     created_at = Column(DateTime, default=datetime.utcnow)
