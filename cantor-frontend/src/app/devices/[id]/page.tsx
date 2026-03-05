@@ -7,6 +7,15 @@ import DashboardLayout from '@/components/DashboardLayout';
 import CloudPhonePlayer from '@/components/CloudPhonePlayer';
 import { api } from '@/lib/api';
 
+interface RTCConnectionInfo {
+  signalingServices: Array<{ id: string; wssUrl: string }>;
+  secretKey: string;
+  containerID: string;
+  roomID: string;
+  peerID: string;
+  iceServers: string[];
+}
+
 interface Device {
   id: string;
   name: string;
@@ -21,7 +30,7 @@ export default function DeviceDetailPage() {
   const deviceId = params.id as string;
   
   const [device, setDevice] = useState<Device | null>(null);
-  const [encryptedKey, setEncryptedKey] = useState<string | null>(null);
+  const [connectionInfo, setConnectionInfo] = useState<RTCConnectionInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -34,16 +43,20 @@ export default function DeviceDetailPage() {
         const deviceData = await api.get(`/devices/${deviceId}`);
         setDevice(deviceData);
         
-        // 2. 获取加密串 (需要 provider_instance_id 作为 instance_id)
-        const instanceId = deviceData.provider_instance_id || deviceId;
+        // 2. 获取 RTC 连接信息 (使用 container_id，即 provider_instance_id)
+        const containerId = deviceData.provider_instance_id || deviceId;
         const rtcResponse = await api.post('/rtc/encrypted-key', {
-          instance_id: instanceId,
+          container_id: containerId,
           region: 'cn-east-1',
           image_quality: 1,
           mode: 1,
         });
         
-        setEncryptedKey(rtcResponse.encrypted_key);
+        if (rtcResponse.success && rtcResponse.connection_info) {
+          setConnectionInfo(rtcResponse.connection_info);
+        } else {
+          setError(rtcResponse.message || '获取连接信息失败');
+        }
       } catch (err: any) {
         console.error('Failed to connect:', err);
         setError(err.message || '连接失败');
@@ -128,7 +141,7 @@ export default function DeviceDetailPage() {
         {/* 视频播放器 */}
         <div className="bg-gray-900 rounded-lg overflow-hidden">
           <CloudPhonePlayer
-            encryptedKey={encryptedKey || ''}
+            connectionInfo={connectionInfo || undefined}
             deviceName={device?.name}
             onError={(err) => setError(err)}
             onConnected={() => console.log('Connected to cloud phone')}

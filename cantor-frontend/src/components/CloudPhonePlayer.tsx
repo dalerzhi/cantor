@@ -3,14 +3,25 @@
 import { useEffect, useRef, useState } from 'react';
 import { Loader2, AlertCircle } from 'lucide-react';
 
+interface RTCConnectionInfo {
+  signalingServices: Array<{ id: string; wssUrl: string }>;
+  secretKey: string;
+  containerID: string;
+  roomID: string;
+  peerID: string;
+  iceServers: string[];
+}
+
 interface CloudPhonePlayerProps {
-  encryptedKey: string;
+  connectionInfo?: RTCConnectionInfo;
+  encryptedKey?: string;
   deviceName?: string;
   onError?: (error: string) => void;
   onConnected?: () => void;
 }
 
 export default function CloudPhonePlayer({
+  connectionInfo,
   encryptedKey,
   deviceName,
   onError,
@@ -22,21 +33,10 @@ export default function CloudPhonePlayer({
   const playerRef = useRef<any>(null);
 
   useEffect(() => {
-    if (!encryptedKey || !containerRef.current) return;
+    if ((!connectionInfo && !encryptedKey) || !containerRef.current) return;
 
-    // 动态加载 SDK
     const loadSDK = async () => {
       try {
-        // 解析加密串
-        const config = JSON.parse(atob(encryptedKey));
-        console.log('RTC Config:', config);
-
-        // 加载 Cheersu SDK
-        const script = document.createElement('script');
-        script.src = '/assets/cheersu-sdk/lib/index.js';
-        script.type = 'module';
-        
-        // 使用全局方式加载
         const scriptGlobal = document.createElement('script');
         scriptGlobal.src = '/assets/cheersu-sdk/public/cstreaming.min.js';
         scriptGlobal.async = true;
@@ -44,7 +44,7 @@ export default function CloudPhonePlayer({
         document.body.appendChild(scriptGlobal);
         
         scriptGlobal.onload = () => {
-          initializePlayer(config);
+          initializePlayer();
         };
 
         scriptGlobal.onerror = () => {
@@ -60,26 +60,23 @@ export default function CloudPhonePlayer({
       }
     };
 
-    const initializePlayer = (config: any) => {
+    const initializePlayer = () => {
       try {
-        // 确保容器有 ID
         if (!containerRef.current?.id) {
           containerRef.current!.id = 'cloud-phone-container';
         }
 
-        // 创建视频元素
         const videoId = 'cloud-phone-video';
         const videoElement = document.createElement('video');
         videoElement.id = videoId;
         videoElement.className = 'w-full h-full object-contain bg-black';
         videoElement.autoplay = true;
         videoElement.playsInline = true;
-        videoElement.muted = true; // 自动播放需要静音
+        videoElement.muted = true;
         
         containerRef.current!.innerHTML = '';
         containerRef.current!.appendChild(videoElement);
 
-        // 使用 SDK 初始化
         // @ts-ignore
         const cstreaming = window.cstreaming || (window as any).CStreaming;
         
@@ -89,10 +86,7 @@ export default function CloudPhonePlayer({
 
         const option = {
           romId: containerRef.current!.id,
-          videoOption: {
-            videoId: videoId,
-            muted: false,
-          },
+          videoOption: { videoId: videoId, muted: false },
           showNetworkInfo: true,
           createPButtons: true,
           noOperationTime: 300,
@@ -119,19 +113,25 @@ export default function CloudPhonePlayer({
             listenNetworkInfo: (info: any) => {
               console.log('Network:', info);
             },
-            listenNoOperation: () => {
-              console.log('No operation timeout');
-            },
           },
         };
 
-        // 初始化播放器
         playerRef.current = new cstreaming(option);
         
-        // 使用加密串启动
-        playerRef.current.startEncryptedKey({
-          encryptedKey: encryptedKey,
-        });
+        // V2 接口：直接使用连接信息
+        if (connectionInfo) {
+          playerRef.current.start({
+            signalingServices: connectionInfo.signalingServices,
+            secretKey: connectionInfo.secretKey,
+            containerID: connectionInfo.containerID,
+            roomID: connectionInfo.roomID,
+            peerID: connectionInfo.peerID,
+            iceServers: connectionInfo.iceServers,
+          });
+        } else if (encryptedKey) {
+          // V4 接口：使用加密串
+          playerRef.current.startEncryptedKey({ encryptedKey });
+        }
 
         setLoading(false);
       } catch (err: any) {
@@ -145,7 +145,6 @@ export default function CloudPhonePlayer({
     loadSDK();
 
     return () => {
-      // 清理
       if (playerRef.current) {
         try {
           playerRef.current.leave();
@@ -154,7 +153,7 @@ export default function CloudPhonePlayer({
         }
       }
     };
-  }, [encryptedKey, onError, onConnected]);
+  }, [connectionInfo, encryptedKey, onError, onConnected]);
 
   if (error) {
     return (
@@ -174,7 +173,6 @@ export default function CloudPhonePlayer({
 
   return (
     <div className="relative w-full h-full bg-black rounded-lg overflow-hidden">
-      {/* 视频容器 */}
       <div
         ref={containerRef}
         id="cloud-phone-container"
@@ -182,18 +180,14 @@ export default function CloudPhonePlayer({
         style={{ minHeight: '400px' }}
       />
 
-      {/* 加载状态 */}
       {loading && (
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-900/80 text-white">
           <Loader2 className="w-8 h-8 animate-spin mb-4" />
           <p className="text-sm">正在连接云手机...</p>
-          {deviceName && (
-            <p className="text-xs text-gray-400 mt-2">{deviceName}</p>
-          )}
+          {deviceName && <p className="text-xs text-gray-400 mt-2">{deviceName}</p>}
         </div>
       )}
 
-      {/* 设备信息 */}
       {deviceName && !loading && (
         <div className="absolute top-4 left-4 bg-black/50 text-white px-3 py-1 rounded text-sm">
           {deviceName}
