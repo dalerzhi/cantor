@@ -1,4 +1,5 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+// 使用相对路径，通过 Nginx 代理到后端
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
 // Helper to get access token from localStorage
 const getAccessToken = () => {
@@ -21,7 +22,10 @@ const apiRequest = async (url: string, options: RequestInit = {}) => {
     ...((options.headers as Record<string, string>) || {}),
   };
 
-  const response = await fetch(`${API_BASE_URL}${url}`, {
+  // 使用相对路径，通过 Nginx 代理
+  const fullUrl = API_BASE_URL ? `${API_BASE_URL}${url}` : url;
+  
+  const response = await fetch(fullUrl, {
     ...options,
     headers,
   });
